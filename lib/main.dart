@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memory_checkup/cubit/file_picker_cubit.dart';
+import 'package:memory_checkup/cubit/filter_records_cubit.dart';
 import 'package:memory_checkup/router.dart';
 
 void main() {
@@ -24,6 +25,9 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<FilePickerCubit>(
           create: (BuildContext filePickerCubitContext) => FilePickerCubit(),
+        ),
+        BlocProvider<FilterRecordsCubit>(
+          create: (BuildContext filePickerCubitContext) => FilterRecordsCubit(),
         ),
       ],
       child: MaterialApp(

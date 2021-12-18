@@ -1,8 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memory_checkup/cubit/file_picker_cubit.dart';
+import 'package:memory_checkup/cubit/filter_records_cubit.dart';
 
 class MyHomePage extends StatefulWidget {
   static const routeName = "/home";
@@ -55,10 +54,30 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               );
             } else if (state is FilePicked) {
-              String value = state.response.readAsLinesSync().join('\n');
-              var map = json.decode(value);
-              map.forEach((value) => {print(value)});
-              return const Text("File Picked");
+              String response = state.response.readAsLinesSync().join('\n');
+              return BlocConsumer<FilterRecordsCubit, FilterRecordsState>(
+                listener: (context, state) {
+                  // implement listener
+                },
+                builder: (context, state) {
+                  return BlocBuilder<FilterRecordsCubit, FilterRecordsState>(
+                    builder: (filterRecordsBuilderContext, recordState) {
+                      BlocProvider.of<FilterRecordsCubit>(context)
+                          .filterRecords(patients: response);
+                      if (recordState is FilteredRecords) {
+                        return ListView.builder(
+                          itemBuilder: (context, index) {
+                            return Text(recordState.records[index].toString());
+                          },
+                          itemCount: recordState.records.length,
+                        );
+                      } else {
+                        return const CircularProgressIndicator();
+                      }
+                    },
+                  );
+                },
+              );
             } else if (state is FilePickerCancelled) {
               return const Text('No file selected');
             } else {
