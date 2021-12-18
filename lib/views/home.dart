@@ -20,6 +20,18 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          BlocBuilder<FilePickerCubit, FilePickerState>(
+            builder: (builderContext, state) {
+              return IconButton(
+                icon: const Icon(Icons.delete_outline_sharp),
+                onPressed: () {
+                  BlocProvider.of<FilePickerCubit>(builderContext).reset();
+                },
+              );
+            },
+          )
+        ],
       ),
       body: Center(
         child: BlocConsumer<FilePickerCubit, FilePickerState>(
@@ -39,8 +51,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   "Load JSON",
                 ),
                 onPressed: () {
-                  BlocProvider.of<FilePickerCubit>(builderContext)
-                      .startPicking();
                   BlocProvider.of<FilePickerCubit>(builderContext).pickJSON();
                 },
               );

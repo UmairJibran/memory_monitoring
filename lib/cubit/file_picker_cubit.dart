@@ -10,9 +10,10 @@ part 'file_picker_state.dart';
 class FilePickerCubit extends Cubit<FilePickerState> {
   FilePickerCubit() : super(FilePickerInitial());
 
-  void startPicking() => emit(FilePickingStarted());
+  void reset() => emit(FilePickerInitial());
 
   Future<String?> pickJSON() async {
+    emit(FilePickingStarted());
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.any,
       allowMultiple: false,
