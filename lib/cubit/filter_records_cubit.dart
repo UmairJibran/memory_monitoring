@@ -14,36 +14,36 @@ class FilterRecordsCubit extends Cubit<FilterRecordsState> {
     bool filterUniquePreferenceSets = false,
     bool filterUniqueConsistentSets = false,
   }) {
-    List<PatientModel> allPatients = [];
+    List<PatientModel> filteredPatients = [];
     var listOfPatients = json.decode(patients);
     for (var patient in listOfPatients) {
-      allPatients.add(PatientModel.fromJson(patient));
+      filteredPatients.add(PatientModel.fromJson(patient));
     }
 
     if (filterUniquePreferenceSets) {
       List<PatientModel> uniquePatientsByPreferenceSets = [];
       List<String> uniqPrefs = [];
-      for (PatientModel element in allPatients) {
+      for (PatientModel element in filteredPatients) {
         if (!uniqPrefs.contains(element.pref)) {
           uniquePatientsByPreferenceSets.add(element);
           uniqPrefs.add(element.pref!);
         }
       }
-      allPatients = [...uniquePatientsByPreferenceSets];
+      filteredPatients = [...uniquePatientsByPreferenceSets];
     }
 
     if (filterUniqueConsistentSets) {
       List<PatientModel> uniquePatientsByPreferenceSets = [];
       List<String> uniqCons = [];
-      for (PatientModel element in allPatients) {
+      for (PatientModel element in filteredPatients) {
         if (!uniqCons.contains(element.cons)) {
           uniquePatientsByPreferenceSets.add(element);
           uniqCons.add(element.cons!);
         }
       }
-      allPatients = [...uniquePatientsByPreferenceSets];
+      filteredPatients = [...uniquePatientsByPreferenceSets];
     }
 
-    emit(FilteredRecords(allPatients));
+    emit(FilteredRecords(filteredPatients));
   }
 }
