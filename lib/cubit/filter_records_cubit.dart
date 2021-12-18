@@ -14,11 +14,36 @@ class FilterRecordsCubit extends Cubit<FilterRecordsState> {
     bool filterUniquePreferenceSets = false,
     bool filterUniqueConsistentSets = false,
   }) {
-    List<PatientModel> filteredPatients = [];
+    List<PatientModel> allPatients = [];
     var listOfPatients = json.decode(patients);
     for (var patient in listOfPatients) {
-      filteredPatients.add(PatientModel.fromJson(patient));
+      allPatients.add(PatientModel.fromJson(patient));
     }
-    emit(FilteredRecords(filteredPatients));
+
+    if (filterUniquePreferenceSets) {
+      List<PatientModel> uniquePatientsByPreferenceSets = [];
+      List<String> uniqPrefs = [];
+      for (PatientModel element in allPatients) {
+        if (!uniqPrefs.contains(element.pref)) {
+          uniquePatientsByPreferenceSets.add(element);
+          uniqPrefs.add(element.pref!);
+        }
+      }
+      allPatients = [...uniquePatientsByPreferenceSets];
+    }
+
+    if (filterUniqueConsistentSets) {
+      List<PatientModel> uniquePatientsByPreferenceSets = [];
+      List<String> uniqCons = [];
+      for (PatientModel element in allPatients) {
+        if (!uniqCons.contains(element.cons)) {
+          uniquePatientsByPreferenceSets.add(element);
+          uniqCons.add(element.cons!);
+        }
+      }
+      allPatients = [...uniquePatientsByPreferenceSets];
+    }
+
+    emit(FilteredRecords(allPatients));
   }
 }

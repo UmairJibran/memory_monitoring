@@ -14,6 +14,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late bool togglePrefs;
+  late bool toggleCons;
+
+  @override
+  void initState() {
+    togglePrefs = false;
+    toggleCons = false;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext parentContext) {
     return Scaffold(
@@ -55,21 +65,68 @@ class _MyHomePageState extends State<MyHomePage> {
               );
             } else if (state is FilePicked) {
               String response = state.response.readAsLinesSync().join('\n');
-              return BlocConsumer<FilterRecordsCubit, FilterRecordsState>(
-                listener: (context, state) {
-                  // implement listener
-                },
+              return BlocBuilder<FilterRecordsCubit, FilterRecordsState>(
                 builder: (context, state) {
                   return BlocBuilder<FilterRecordsCubit, FilterRecordsState>(
                     builder: (filterRecordsBuilderContext, recordState) {
                       BlocProvider.of<FilterRecordsCubit>(context)
-                          .filterRecords(patients: response);
+                          .filterRecords(
+                        patients: response,
+                        filterUniquePreferenceSets: togglePrefs,
+                        filterUniqueConsistentSets: toggleCons,
+                      );
                       if (recordState is FilteredRecords) {
-                        return ListView.builder(
-                          itemBuilder: (context, index) {
-                            return Text(recordState.records[index].toString());
-                          },
-                          itemCount: recordState.records.length,
+                        return SizedBox(
+                          height: MediaQuery.of(context).size.height,
+                          child: Column(
+                            children: [
+                              ButtonBar(
+                                children: [
+                                  const Text("Prefs"),
+                                  Switch(
+                                    value: togglePrefs,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        togglePrefs = value;
+                                      });
+                                    },
+                                  ),
+                                  const Text("Cons"),
+                                  Switch(
+                                    value: toggleCons,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        toggleCons = value;
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height - 150,
+                                child: ListView.builder(
+                                  itemBuilder: (context, index) {
+                                    return ListTile(
+                                      title: Text(
+                                          recordState.records[index].ruleBody!),
+                                      subtitle: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Pref: " +
+                                              recordState.records[index].pref!),
+                                          Text("Con: " +
+                                              recordState.records[index].cons!),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                  itemCount: recordState.records.length,
+                                ),
+                              ),
+                            ],
+                          ),
                         );
                       } else {
                         return const CircularProgressIndicator();
