@@ -1,7 +1,10 @@
 part of 'file_picker_cubit.dart';
 
 @immutable
-abstract class FilePickerState {}
+abstract class FilePickerState extends Equatable {
+  @override
+  List<Object> get props => [];
+}
 
 class FilePickerInitial extends FilePickerState {}
 
